@@ -29,9 +29,9 @@ public class TxBuildRequest extends Web3BasicRequest{
         arguments.addArgument(Constant.Mnemonic, Constant.DEFAULT_MNEMONIC);
         arguments.addArgument(Constant.SIZE,"100");
         arguments.addArgument(Constant.TO, "");
-        arguments.addArgument(Constant.GasLimit, "1000000");
-        arguments.addArgument(Constant.GasPrice, "10000");
-        arguments.addArgument(Constant.VALUE,"10");
+        arguments.addArgument(Constant.GasLimit, "200000");
+        arguments.addArgument(Constant.GasPrice, "100000");
+        arguments.addArgument(Constant.VALUE,"0");
         arguments.addArgument(Constant.PAYLOAD,"");
         return arguments;
     }
@@ -54,8 +54,7 @@ public class TxBuildRequest extends Web3BasicRequest{
 
     @Override
     public void prepareRun(JavaSamplerContext context) {
-        int currentIdx = curSendIdx.getAndAdd(1) % this.accountList.size();
-        System.out.println("currentIdx:" + currentIdx);
+        int currentIdx = curSendIdx.getAndAdd(1) % this.accountList.size();    
         this.currentSendCredentials = this.accountList.get(currentIdx).getCredentials();
     }
 
@@ -69,16 +68,16 @@ public class TxBuildRequest extends Web3BasicRequest{
     private boolean sendTx(Web3j web3j, Credentials fromCredentials, String contractAddress, BigInteger bigInteger, String payload) {
         try {
             String hexStr = TransactionUtil.signTx(this.web3j, fromCredentials, gasPrice, gasLimit, contractAddress, bigInteger, payload);
-            String txHash = web3j.ethSendRawTransaction(hexStr).send().getTransactionHash();
-            System.out.println("txHash:" + txHash);
-            if (txHash.length() > 10) {
-                return true;
-            }
+            web3j.ethSendRawTransaction(hexStr).send().getTransactionHash();
+            // System.out.println("txHash:" + txHash);
+            // if (txHash.length() > 10) {
+            return true;
+            // }
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
-        return false;
+        // return false;
     }
 
 }

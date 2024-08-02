@@ -1,5 +1,7 @@
 package com.nervos.benckmark.adapts;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.nervos.benckmark.contracts.BEP20;
 import com.nervos.benckmark.contracts.LogContract;
@@ -8,6 +10,9 @@ import com.nervos.benckmark.model.BlkMsg;
 import com.nervos.benckmark.model.TxMsg;
 import com.nervos.benckmark.util.TransactionUtil;
 import com.nervos.benckmark.util.Web3Util;
+
+import jnr.ffi.Struct.socklen_t;
+
 import org.bitcoinj.crypto.*;
 import org.bitcoinj.wallet.DeterministicSeed;
 import org.web3j.crypto.Credentials;
@@ -20,11 +25,18 @@ import org.web3j.tx.gas.ContractGasProvider;
 import org.web3j.tx.gas.DefaultGasProvider;
 import org.web3j.tx.gas.StaticGasProvider;
 
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -242,33 +254,81 @@ public class SingletonService {
         return BEP20.load(contractAddress, web3j, cutomerTokenTxManager, staticGasProvider);
     }
 
-    private static List<Account> getAccountListByHD(String mnstr,int size){
+    // private static List<Account> getAccountListByHD(String mnstr,int size){
 
-        SecureRandom secureRandom = new SecureRandom();
-        byte[] entropy = new byte[DeterministicSeed.DEFAULT_SEED_ENTROPY_BITS / 8];
-        secureRandom.nextBytes(entropy);
+    //     SecureRandom secureRandom = new SecureRandom();
+    //     byte[] entropy = new byte[DeterministicSeed.DEFAULT_SEED_ENTROPY_BITS / 8];
+    //     secureRandom.nextBytes(entropy);
 
-        //生成12位助记词
-        List<String> str = Arrays.asList(mnstr.split(" "));
+    //     //生成12位助记词
+    //     List<String> str = Arrays.asList(mnstr.split(" "));
 
-        //使用助记词生成钱包种子
-        byte[] seed = MnemonicCode.toSeed(str, "");
+    //     //使用助记词生成钱包种子
+    //     byte[] seed = MnemonicCode.toSeed(str, "");
+    //     DeterministicKey masterPrivateKey = HDKeyDerivation.createMasterPrivateKey(seed);
+    //     DeterministicHierarchy deterministicHierarchy = new DeterministicHierarchy(masterPrivateKey);
+    //     List<Account> accountList = new ArrayList<>();
+
+    //     for (int i = 0; i < size; i++) {
+    //         DeterministicKey deterministicKey = deterministicHierarchy
+    //                 .deriveChild(BIP44_ETH_ACCOUNT_ZERO_PATH, false, true, new ChildNumber(i));
+    //         byte[] bytes = deterministicKey.getPrivKeyBytes();
+    //         ECKeyPair keyPair = ECKeyPair.create(bytes);
+    //         keyPair.getPrivateKey().toString(16);
+    //         Credentials credentials = Credentials.create("0x"+keyPair.getPrivateKey().toString(16));
+    //         System.out.println(credentials);
+    //         accountList.add(new Account(credentials,new BigInteger("1")));
+
+    //     }
+    //     return accountList;
+    // }
+
+
+
+    private static List<Account> getAccountListByHD(String mnstr, int size) throws Exception {
+        List<String> mnList = List.of(mnstr.split(" "));
+
+        // Зчитування мнемоніки із рядка та створення seed
+        byte[] seed = MnemonicCode.toSeed(mnList, "");
         DeterministicKey masterPrivateKey = HDKeyDerivation.createMasterPrivateKey(seed);
         DeterministicHierarchy deterministicHierarchy = new DeterministicHierarchy(masterPrivateKey);
-        List<Account> accountList = new ArrayList<>();
 
-        for (int i = 0; i < size; i++) {
-            DeterministicKey deterministicKey = deterministicHierarchy
-                    .deriveChild(BIP44_ETH_ACCOUNT_ZERO_PATH, false, true, new ChildNumber(i));
-            byte[] bytes = deterministicKey.getPrivKeyBytes();
-            ECKeyPair keyPair = ECKeyPair.create(bytes);
-            keyPair.getPrivateKey().toString(16);
-            Credentials credentials = Credentials.create("0x"+keyPair.getPrivateKey().toString(16));
-            accountList.add(new Account(credentials,new BigInteger("1")));
+        // Зчитування ключів з JSON-файлу
+        List<Account> accountList = readKeysFromJson(size, deterministicHierarchy);
 
-        }
         return accountList;
     }
+
+    private static List<Account> readKeysFromJson(int size, DeterministicHierarchy deterministicHierarchy)
+            throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Account> accountList = new ArrayList<>();
+        // String filePath = "/home/s_one/workspace/java-loader-tool/eth-jmeter-sample/all-cats.json";
+        String relativePathString = "/eth-jmeter-sample/all-cats.json";
+
+        String currentWorkingDirectory = System.getProperty("user.dir");
+
+        Path filePath = Paths.get(currentWorkingDirectory, relativePathString);
+
+        String jsonContent = new String(Files.readAllBytes(filePath));
+        JsonNode rootNode = objectMapper.readValue(jsonContent, JsonNode.class);
+        Iterator<JsonNode> elements = rootNode.elements();
+
+        while (elements.hasNext()) {
+            for (int i = 0; i < size; i++) {
+                JsonNode element = elements.next();
+                String privateKeyHex = element.get("private_key").asText();
+                Credentials credentials = Credentials.create(privateKeyHex);
+                Account account = new Account(credentials, new BigInteger("1"));
+                accountList.add(account);
+            
+            }
+            break;
+        }
+
+        return accountList;
+    }
+
 
     private static List<Account> getAccountList(String rawPrivateKeys) {
         List<Account> accountList = new ArrayList<>();
@@ -283,7 +343,6 @@ public class SingletonService {
         return accountList;
 
     }
-
 
     private static List<Credentials> getCredentialsList(String[] privateKeys) {
         List<Credentials> credentialsList = new ArrayList<>();

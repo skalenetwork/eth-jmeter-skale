@@ -16,8 +16,8 @@ public class TransactionUtil {
         BigInteger gasPrice;
         BigInteger gasLimit;
         nonce = web3j.ethGetTransactionCount(credentials.getAddress(), DefaultBlockParameterName.PENDING).send().getTransactionCount();
-        gasPrice = web3j.ethGasPrice().send().getGasPrice();
-        gasLimit = web3j.ethEstimateGas(Transaction.createEthCallTransaction(credentials.getAddress(), to, data)).send().getAmountUsed();
+        gasPrice = BigInteger.valueOf(100000);
+        gasLimit = BigInteger.valueOf(120000);
         return signTx(web3j, credentials, nonce, gasPrice, gasLimit, to, value, data);
     }
     public static String signTx(Web3j web3j, Credentials credentials,  BigInteger gasPrice, BigInteger gasLimit, String to, BigInteger value, String data) throws Exception {
