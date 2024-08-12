@@ -50,15 +50,15 @@ mvn -v
 ## Jmx erc20 sampler explanation
 Located in ``./eth-jmeter-skale/src/test/jmeter/``
 
-` rpcUrl ` - Url endpoint of node 
-` default_private_key ` - Private key of user to refill balances
-` Mnemonic ` - test data
-` size ` - amount of transactions should be sent in the 1 round 
-` to ` - Contract address of erc20 
-` gasLimit ` - max gas limit for the transaction
-` gasPrice ` - gas price on the network (Default 100000 on Skale)
-` value ` - Amount of Sfuel to send
-` payload ` - data field for ERC20 transfers
+` rpcUrl ` - Url endpoint of node     
+` default_private_key ` - Private key of user to refill balances    
+` Mnemonic ` - test data    
+` size ` - amount of transactions should be sent in the 1 round     
+` to ` - Contract address of erc20    
+` gasLimit ` - max gas limit for the transaction   
+` gasPrice ` - gas price on the network (Default 100000 on Skale)   
+` value ` - Amount of Sfuel to send   
+` payload ` - data field for ERC20 transfers   
 
 
 ### Edit run for ERC20 transfer
@@ -67,10 +67,10 @@ Located in ``./eth-jmeter-skale/src/test/jmeter/``
 cd src/test/jmeter/
 
 ```
-Copy  ``4-nodes-example.jmx`` file  and replace:   
-` to ` - set actual erc20 contract for the provided endpoints   
-` gasLimit ` - set expected gasLimit for the transaction (default 21000)  
-` payload ` - Set data with erc20 method of transfer or other contract interaction   
+Copy  ``4-nodes-example.jmx`` file  and replace:      
+` to ` - set actual erc20 contract for the provided endpoints     
+` gasLimit ` - set expected gasLimit for the transaction (default 21000)    
+` payload ` - Set data with erc20 method of transfer or other contract interaction     
 Example
 ```
 0x56b8c724000000000000000000000000fe2c5aa110fff89361806ea7ee080bfffba0d3dd0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000006
