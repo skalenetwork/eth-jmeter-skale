@@ -30,7 +30,7 @@ Add Path for Maven and Java
 ```
 sudo nano /etc/profile.d/maven.sh
 
-export JAVA_HOME=/opt/jdk-17.0.12
+export JAVA_HOME=/opt/jdk-17.0.9
 export M2_HOME=/opt/apache-maven-4.0.0-alpha-12
 export MAVEN_HOME=/opt/apache-maven-4.0.0-alpha-12
 export PATH=${M2_HOME}/bin:${PATH}
