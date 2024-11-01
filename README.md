@@ -25,7 +25,7 @@ sudo wget https://dlcdn.apache.org/maven/maven-4/4.0.0-alpha-12/binaries/apache-
 sudo tar xvf apache-maven-4.0.0-alpha-12-bin.tar.gz
 ```
 
-Add Path for Maven and Java
+Add Path for Maven and Java to ``maven.sh``
 
 ```
 sudo nano /etc/profile.d/maven.sh
