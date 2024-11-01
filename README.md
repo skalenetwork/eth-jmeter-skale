@@ -27,19 +27,23 @@ sudo tar xvf apache-maven-4.0.0-alpha-12-bin.tar.gz
 
 Add Path for Maven and Java to ``maven.sh``
 
+1. Run
 ```
 sudo nano /etc/profile.d/maven.sh
-
+```
+2. Add to the end of file
+```
 export JAVA_HOME=/opt/jdk-17.0.9
 export M2_HOME=/opt/apache-maven-4.0.0-alpha-12
 export MAVEN_HOME=/opt/apache-maven-4.0.0-alpha-12
 export PATH=${M2_HOME}/bin:${PATH}
-
+```
+3. Apply changes 
+```
 source /etc/profile.d/maven.sh
-
 ```
 
-Check installation
+4. Check installation
 ```
 echo $JAVA_HOME
 
