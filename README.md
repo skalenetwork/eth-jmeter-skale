@@ -11,9 +11,14 @@ cd /opt
 apt install openjdk-17-jre-headless
 
 sudo wget https://download.oracle.com/java/17/archive/jdk-17.0.9_linux-x64_bin.tar.gz 
-sudo tar xvf jdk-17_linux-x64_bin.tar.gz 
+sudo tar xvf jdk-17_linux-x64_bin.tar.gz
 
-
+```
+Add path to bashrc
+```
+nano ~/.bashrc
+export PATH=$PATH:/opt/jdk-17.0.9/bin/
+source ~/.bashrc
 ```
 Install Maven
 
