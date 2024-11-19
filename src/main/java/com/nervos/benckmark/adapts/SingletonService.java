@@ -288,12 +288,10 @@ public class SingletonService {
     private static List<Account> getAccountListByHD(String mnstr, int size) throws Exception {
         List<String> mnList = List.of(mnstr.split(" "));
 
-        // Зчитування мнемоніки із рядка та створення seed
         byte[] seed = MnemonicCode.toSeed(mnList, "");
         DeterministicKey masterPrivateKey = HDKeyDerivation.createMasterPrivateKey(seed);
         DeterministicHierarchy deterministicHierarchy = new DeterministicHierarchy(masterPrivateKey);
 
-        // Зчитування ключів з JSON-файлу
         List<Account> accountList = readKeysFromJson(size, deterministicHierarchy);
 
         return accountList;
@@ -303,15 +301,14 @@ public class SingletonService {
             throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         List<Account> accountList = new ArrayList<>();
-        // String filePath = "/home/s_one/workspace/java-loader-tool/eth-jmeter-sample/all-cats.json";
-        String relativePathString = "/eth-jmeter-sample/all-cats.json";
 
-        String currentWorkingDirectory = System.getProperty("user.dir");
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        try (InputStream inputStream = classLoader.getResourceAsStream("all-cats.json")) {
+            if (inputStream == null) {
+                throw new IllegalArgumentException("all-cats.json not found.");
+            }
 
-        Path filePath = Paths.get(currentWorkingDirectory, relativePathString);
-
-        String jsonContent = new String(Files.readAllBytes(filePath));
-        JsonNode rootNode = objectMapper.readValue(jsonContent, JsonNode.class);
+        JsonNode rootNode = objectMapper.readTree(inputStream);
         Iterator<JsonNode> elements = rootNode.elements();
 
         while (elements.hasNext()) {
@@ -327,6 +324,7 @@ public class SingletonService {
         }
 
         return accountList;
+        }
     }
 
 
