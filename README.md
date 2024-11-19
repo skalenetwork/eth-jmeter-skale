@@ -88,8 +88,9 @@ Example
 
 
 
-## use for run
-1. Run all .jmx files in ./src/test/jmeter
+## How to run
+1. Copy [all-cats.json](https://github.com/skalenetwork/SkaleExperimental/blob/master/s1/skaled_tests/mint_bomber/data/all_cats.json) to ``./src/test/resources`` and ``./src/main/resources``
+2. Run all .jmx files in ./src/test/jmeter
 
 ```
 cd ./eth-jmeter-skale
